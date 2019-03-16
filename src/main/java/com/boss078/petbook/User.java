@@ -1,15 +1,17 @@
 package com.boss078.petbook;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<Pet> pets = new ArrayList<>();
 
     private String name;
 
@@ -49,4 +51,15 @@ public class User {
         this.age = age;
     }
 
+    public void addPet(Pet pet) {
+        pets.add(pet);
+    }
+
+    public void removePet(Pet pet) {
+        pets.remove(pet);
+    }
+
+    public List<Pet> getPets() {
+        return pets;
+    }
 }

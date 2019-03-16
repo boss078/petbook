@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller    // This means that this class is a Controller
@@ -42,14 +43,27 @@ public class UserController {
         }
     }
 
+    @GetMapping("pets")
+    public @ResponseBody List<Pet> getPets(@RequestParam Integer id) {
+        if (userRepository.existsById(id)) {
+            return userRepository.findById(id).get().getPets();
+        }
+        else {
+            return null;
+        }
+    }
+
     @PutMapping("update")
     public @ResponseBody String updateUser(@RequestParam Integer id, @RequestParam String newName
             , @RequestParam String newSurname, @RequestParam Integer newAge) {
         if (userRepository.existsById(id)) {
             User n = userRepository.findById(id).get();
-            n.setName(newName);
-            n.setSurname(newSurname);
-            n.setAge(newAge);
+            if (newName != null  && !newName.isEmpty())
+                n.setName(newName);
+            if (newSurname != null && !newSurname.isEmpty())
+                n.setSurname(newSurname);
+            if (newAge != null)
+                n.setAge(newAge);
             userRepository.save(n);
             return "Updated.";
         }
